@@ -1,0 +1,36 @@
+name: Create GCS Bucket
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_ids:
+        description: 'Comma-separated list of project IDs'
+        required: true
+      project_name:
+        description: 'Project name'
+        required: true
+
+jobs:
+  create-gcs-bucket:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: 'latest'
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+          export_default_credentials: true
+
+      - name: Run GCS Bucket Creation Script
+        env:
+          PROJECT_IDS: ${{ github.event.inputs.project_ids }}
+          PROJECT_NAME: ${{ github.event.inputs.project_name }}
+        run: |
+          echo "Running GCS bucket creation script..."
+          chmod +x ./scripts/create_gcs_bucket.sh
+          ./scripts/create_gcs_bucket.sh "${PROJECT_IDS}" "${PROJECT_NAME}"
