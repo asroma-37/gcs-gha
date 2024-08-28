@@ -1,0 +1,40 @@
+name: Create GCS Bucket
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_id:
+        description: 'Project ID for which the GCS bucket should be created'
+        required: true
+
+jobs:
+  create-gcs-bucket:
+    runs-on: ubuntu-latest
+    
+    permissions:
+      id-token: write  # Needed for OIDC authentication
+      contents: read   # Needed for checking out the repository
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Authenticate to Google Cloud
+        id: auth
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: projects/659578408596/locations/global/workloadIdentityPools/github-actions/providers/my-provider
+          service_account: gcs-githubactiions@airman1-429600.iam.gserviceaccount.com
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+        with:
+          version: 'latest'
+
+      - name: Run GCS Bucket Creation Script
+        env:
+          PROJECT_ID: ${{ github.event.inputs.project_id }}
+        run: |
+          echo "Running GCS bucket creation script..."
+          chmod +x ./scripts/create_gcs_bucket.sh
+          ./scripts/create_gcs_bucket.sh "${PROJECT_ID}"
