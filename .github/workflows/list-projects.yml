@@ -44,4 +44,3 @@ jobs:
 
     - name: List GCP Projects
       run: gcloud projects list
-'
