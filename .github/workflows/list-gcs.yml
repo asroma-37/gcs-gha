@@ -26,5 +26,5 @@ jobs:
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
         run: |
-          chmod +x ./list_gcs_buckets.sh
+          chmod +x ./list_gcs_bucket.sh
           ./list_gcs_buckets.sh ${{ secrets.GCP_PROJECT_ID }}
