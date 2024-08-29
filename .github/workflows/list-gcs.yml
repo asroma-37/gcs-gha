@@ -20,8 +20,7 @@ jobs:
           service_account: "gcs-githubactiions@airman1-429600.iam.gserviceaccount.com"
 
       - name: Install gcloud SDK
-        run: |
-          sudo apt-get install -y google-cloud-sdk
+        uses: google-github-actions/setup-gcloud@v1
 
       - name: List GCS Buckets
         env:
