@@ -1,0 +1,31 @@
+name: List GCS Buckets
+
+on: [push, pull_request]
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  list-gcs-buckets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Configure Google Cloud auth
+        uses: google-github-actions/auth@v1
+        with:
+          workload_identity_provider: "projects/659578408596/locations/global/workloadIdentityPools/github-actions/providers/my-provider"
+          service_account: "gcs-githubactiions@airman1-429600.iam.gserviceaccount.com"
+
+      - name: Install gcloud SDK
+        run: |
+          sudo apt-get install -y google-cloud-sdk
+
+      - name: List GCS Buckets
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ steps.auth.outputs.credentials_file_path }}
+        run: |
+          chmod +x ./list_gcs_buckets.sh
+          ./list_gcs_buckets.sh ${{ secrets.GCP_PROJECT_ID }}
