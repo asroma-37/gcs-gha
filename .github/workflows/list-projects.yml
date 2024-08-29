@@ -1,0 +1,47 @@
+jobs:
+  job_id:
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        workload_identity_provider: projects/659578408596/locations/global/workloadIdentityPools/github-actions/providers/my-provider
+        service_account: gcs-githubactiions@airman1-429600.iam.gserviceaccount.com
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_id:
+        description: 'GCP Project ID'
+        required: true
+        type: string
+
+jobs:
+  list-projects:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }} # Using secret for Workload Identity Provider
+        service_account: ${{ secrets.GCP_SA_EMAIL }} # Using secret for Service Account email
+
+    - name: Set up Google Cloud SDK
+      uses: google-github-actions/setup-gcloud@v1
+      with:
+        project_id: ${{ github.event.inputs.project_id }} # Using the input for GCP Project ID
+
+    - name: List GCP Projects
+      run: gcloud projects list
+'
