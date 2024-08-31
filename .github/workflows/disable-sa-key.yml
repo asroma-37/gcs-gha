@@ -33,11 +33,18 @@ jobs:
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
-        with:
-          project_id: ${{ github.event.inputs.project-id }}
+
+      - name: Log in to gcloud
+        run: |
+          gcloud auth login --brief --cred-file="${{ secrets.GCP_SA_KEY }}"
+          
+      - name: Set Project
+        run: |
+          gcloud config set project ${{ github.event.inputs.project-id }}
 
       - name: Disable Service Account Key
         run: |
           gcloud iam service-accounts keys disable ${{ github.event.inputs.key-id }} \
             --iam-account=${{ github.event.inputs.sa-email }} \
             --project=${{ github.event.inputs.project-id }}
+
