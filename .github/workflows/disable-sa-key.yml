@@ -36,7 +36,7 @@ jobs:
 
       - name: Log in to gcloud
         run: |
-          gcloud auth login --brief --cred-file="${{ secrets.GCP_SA_KEY }}"
+          gcloud auth login --brief --cred-file="gcs-githubactiions@airman1-429600.iam.gserviceaccount.com"
           
       - name: Set Project
         run: |
