@@ -33,10 +33,6 @@ jobs:
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v1
-
-      - name: Log in to gcloud
-        run: |
-          gcloud auth login --brief --cred-file="gcs-githubactiions@airman1-429600.iam.gserviceaccount.com"
           
       - name: Set Project
         run: |
