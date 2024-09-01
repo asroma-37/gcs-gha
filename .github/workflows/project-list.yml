@@ -22,9 +22,8 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
-          project_id: wif-demo-1
-          workload_identity_provider: projects/210105524131/locations/global/workloadIdentityPools/github/providers/my-repo
-          
+          service_account: gcs-githubactiions@airman1-429600.iam.gserviceaccount.com
+          workload_identity_provider: projects/659578408596/locations/global/workloadIdentityPools/github-actions/providers/my-provider
 
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v2
