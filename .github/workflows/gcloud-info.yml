@@ -1,0 +1,22 @@
+name: gcloud info
+jobs:
+  job_id:
+    # Add "id-token" with the intended permissions.
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+    - id: 'auth'
+      uses: 'google-github-actions/auth@v2'
+      with:
+        project_id: wif-demo-1
+        workload_identity_provider: projects/210105524131/locations/global/workloadIdentityPools/github/providers/my-repo
+
+    - name: 'Set up Cloud SDK'
+      uses: 'google-github-actions/setup-gcloud@v2'
+      with:
+        version: '>= 363.0.0'
+
+    - name: 'Use gcloud CLI'
+      run: 'gcloud info'
