@@ -1,0 +1,38 @@
+name: List GCP Projects-2
+
+on:
+  workflow_dispatch:
+    inputs:
+      project-id:
+        description: 'The GCP project ID to authenticate and set context'
+        required: true
+
+jobs:
+  list-projects:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          project_id: wif-demo-1
+          workload_identity_provider: projects/210105524131/locations/global/workloadIdentityPools/github/providers/my-repo
+          
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Set Project
+        run: |
+          gcloud config set project ${{ github.event.inputs.project-id }}
+
+      - name: List GCP Projects
+        run: |
+          gcloud projects list --filter="projectId=${{ github.event.inputs.project-id }}"
