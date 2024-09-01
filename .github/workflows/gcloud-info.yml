@@ -1,4 +1,7 @@
 name: gcloud info
+on:
+
+
 jobs:
   job_id:
     # Add "id-token" with the intended permissions.
