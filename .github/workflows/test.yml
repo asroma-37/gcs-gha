@@ -1,0 +1,35 @@
+name: deji test # Added name for the workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      project-id:
+        description: 'The GCP project ID to authenticate and set context'
+        required: false
+
+jobs:
+  job_id:
+    # Permissions required for Workload Identity Federation
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ''
+      - uses: 'actions/checkout@v4'
+      
+      - name: 'Authenticate to Google Cloud'  # Added a descriptive name for clarity
+        id: 'auth'
+        uses: 'google-github-actions/auth@v2'
+        with:
+          project_id: wif-demo-1
+          workload_identity_provider: projects/210105524131/locations/global/workloadIdentityPools/github/providers/my-repo
+      - name: 'Set up Cloud SDK'
+        uses: 'google-github-actions/setup-gcloud@v2'
+        with:
+          version: '>= 363.0.0'
+
+      - name: 'Use gcloud CLI'
+        run: 'gcloud info'
