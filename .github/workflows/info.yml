@@ -17,6 +17,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: ''
+      - uses: 'actions/checkout@v4'
+      
       - name: 'Authenticate to Google Cloud'  # Added a descriptive name for clarity
         id: 'auth'
         uses: 'google-github-actions/auth@v2'
