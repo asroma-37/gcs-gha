@@ -1,0 +1,47 @@
+name: Enable Service Account Key
+
+on:
+  workflow_dispatch:
+    inputs:
+      key-id:
+        description: 'The key ID to disable'
+        required: true
+      sa-email:
+        description: 'The service account email'
+        required: true
+      project-id:
+        description: 'The GCP project ID'
+        required: true
+
+jobs:
+  disable-key:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+      
+          workload_identity_provider: 'projects/210105524131/locations/global/workloadIdentityPools/github-2/providers/my-repo-2'
+          service_account: 'gha-test@wif-demo-1.iam.gserviceaccount.com'
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+          
+      - name: Set Project
+        run: |
+          gcloud config set project ${{ github.event.inputs.project-id }}
+
+      - name: Enable Service Account Key
+        run: |
+          gcloud iam service-accounts keys enable ${{ github.event.inputs.key-id }} \
+            --iam-account=${{ github.event.inputs.sa-email }} \
+            --project=${{ github.event.inputs.project-id }}
+
