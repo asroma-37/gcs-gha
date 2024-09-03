@@ -1,6 +1,6 @@
 name: Enable Service Account Key
 
-on: pull
+on:
   workflow_dispatch:
     inputs:
       key-id:
