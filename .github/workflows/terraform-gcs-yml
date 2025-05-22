@@ -1,0 +1,62 @@
+name: Create GCS Bucket
+
+on:
+  workflow_dispatch:
+    inputs:
+      project_id:
+        description: 'GCP Project ID'
+        required: true
+      bucket_name:
+        description: 'Bucket Name'
+        required: true
+      location:
+        description: 'Bucket Location'
+        required: false
+        default: 'US'
+      storage_class:
+        description: 'Storage Class'
+        required: false
+        default: 'STANDARD'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Auth with Google Cloud (via WIF + impersonation)
+      uses: google-github-actions/auth@v1
+      with:
+        workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+        service_account: ${{ secrets.WIF_SA }}
+        impersonate_service_account: ${{ secrets.IMPERSONATE_SA }}
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.5.7
+
+    - name: Terraform Init (Remote GCS Backend)
+      run: terraform init
+
+    - name: Terraform Plan
+      run: |
+        terraform plan -input=false \
+          -var="project_id=${{ github.event.inputs.project_id }}" \
+          -var="bucket_name=${{ github.event.inputs.bucket_name }}" \
+          -var="location=${{ github.event.inputs.location }}" \
+          -var="storage_class=${{ github.event.inputs.storage_class }}"
+
+    - name: Terraform Apply
+      run: |
+        terraform apply -auto-approve -input=false \
+          -var="project_id=${{ github.event.inputs.project_id }}" \
+          -var="bucket_name=${{ github.event.inputs.bucket_name }}" \
+          -var="location=${{ github.event.inputs.location }}" \
+          -var="storage_class=${{ github.event.inputs.storage_class }}"
